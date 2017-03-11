@@ -1,16 +1,23 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(laser_filters)
+set(CMAKE_CXX_FLAGS "-std=c++0x ${CMAKE_CXX_FLAGS}")
 
 ##############################################################################
 # Find dependencies
 ##############################################################################
 
 set(THIS_PACKAGE_ROS_DEPS sensor_msgs roscpp tf filters message_filters
-  laser_geometry pluginlib angles)
+  laser_geometry pluginlib angles cv_bridge dynamic_reconfigure tuw_geometry_msgs)
 
 find_package(catkin REQUIRED COMPONENTS ${THIS_PACKAGE_ROS_DEPS})
 find_package(Boost REQUIRED COMPONENTS system signals)
 include_directories(include ${catkin_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
+find_package(OpenCV REQUIRED)
+
+## Generate dynamic reconfigure parameters in the 'cfg' folder
+generate_dynamic_reconfigure_options(
+  cfg/LineFilter.cfg
+)
 
 ##############################################################################
 # Define package
@@ -30,8 +37,9 @@ catkin_package(
 add_library(pointcloud_filters src/pointcloud_filters.cpp)
 target_link_libraries(pointcloud_filters ${catkin_LIBRARIES})
 
-add_library(laser_scan_filters src/laser_scan_filters.cpp src/median_filter.cpp src/array_filter.cpp src/box_filter.cpp)
+add_library(laser_scan_filters src/laser_scan_filters.cpp src/median_filter.cpp src/array_filter.cpp src/box_filter.cpp src/line_filter.cpp)
 target_link_libraries(laser_scan_filters ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+add_dependencies(laser_scan_filters ${PROJECT_NAME}_gencfg)
 
 add_executable(scan_to_cloud_filter_chain src/scan_to_cloud_filter_chain.cpp)
 target_link_libraries(scan_to_cloud_filter_chain ${catkin_LIBRARIES} ${Boost_LIBRARIES})
@@ -41,6 +49,7 @@ target_link_libraries(scan_to_scan_filter_chain ${catkin_LIBRARIES} ${Boost_LIBR
 
 add_executable(generic_laser_filter_node src/generic_laser_filter_node.cpp)
 target_link_libraries(generic_laser_filter_node ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+
 
 if (CATKIN_ENABLE_TESTING)
   find_package(rostest)
