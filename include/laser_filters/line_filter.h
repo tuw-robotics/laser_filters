@@ -55,6 +55,8 @@ namespace laser_filters
 class LaserLineFilter : public filters::FilterBase<sensor_msgs::LaserScan>
 {
   public:
+    static const int FNC_HOUGH_LINES   = 0;
+    static const int FNC_HOUGH_LINES_P = 1;
     LaserLineFilter();
     bool configure();
 

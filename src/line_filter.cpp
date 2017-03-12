@@ -39,6 +39,7 @@
 #include <tuw_geometry_msgs/LineSegments.h>
 
 #include <tuw_linedetection/Linesegment2DDetectorConfig.h>
+
 using namespace cv;
 using namespace std;
 
@@ -88,7 +89,30 @@ bool laser_filters::LaserLineFilter::update (
         output_scan.ranges[i] = 2.;
     }
     vector<Vec4i> lines;
-    HoughLinesP ( img_scan_, lines, config_.rho, config_.theta, config_.threshold, config_.minLineLength*scale, config_.maxLineGap*scale );
+    switch ( config_.line_detection_function ) {
+    case FNC_HOUGH_LINES: {
+        vector<Vec2f> l;
+        Vec4i v;
+        HoughLines ( img_scan_, l, config_.rho, config_.theta, config_.threshold, 0, 0 );
+
+        for ( size_t i = 0; i < l.size(); i++ ) {
+            float rho = l[i][0], theta = l[i][1];
+            Point pt1, pt2;
+            double a = cos ( theta ), b = sin ( theta );
+            double x0 = a*rho, y0 = b*rho;
+            v[0] = cvRound ( x0 + 1000* ( -b ) );
+            v[1] = cvRound ( y0 + 1000* ( a ) );
+            v[2] = cvRound ( x0 - 1000* ( -b ) );
+            v[3] = cvRound ( y0 - 1000* ( a ) );
+            lines.push_back ( v );
+        }
+    }
+    break;
+    case FNC_HOUGH_LINES_P:
+    default:
+        HoughLinesP ( img_scan_, lines, config_.rho, config_.theta, config_.threshold, config_.min_line_length*scale, config_.max_line_gap*scale );
+        break;
+    }
     if ( config_.plot_detected_lines ) {
         cvtColor ( img_scan_, img_lines_, CV_GRAY2BGR );
         for ( size_t i = 0; i < lines.size(); i++ ) {
@@ -104,11 +128,11 @@ bool laser_filters::LaserLineFilter::update (
     tuw_geometry_msgs::LineSegments line_segments_msg;
     for ( int i = 0; i < lines.size(); i++ ) {
         Vec4i l = lines[i];
-        line_segment_msg.p0.x = -(l[1] - center) / scale;
-        line_segment_msg.p0.y = -(l[0] - center) / scale;
+        line_segment_msg.p0.x = - ( l[1] - center ) / scale;
+        line_segment_msg.p0.y = - ( l[0] - center ) / scale;
         line_segment_msg.p0.z = 0;
-        line_segment_msg.p1.x = -(l[3] - center) / scale;
-        line_segment_msg.p1.y = -(l[2] - center) / scale;
+        line_segment_msg.p1.x = - ( l[3] - center ) / scale;
+        line_segment_msg.p1.y = - ( l[2] - center ) / scale;
         line_segment_msg.p1.z = 0;
         line_segments_msg.segments.push_back ( line_segment_msg );
     }
@@ -120,4 +144,3 @@ bool laser_filters::LaserLineFilter::update (
 
     return true;
 }
-
