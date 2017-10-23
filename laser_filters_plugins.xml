@@ -54,6 +54,12 @@
 	 This is a filter detects lines and removes them.
       </description>
     </class>
+    <class name="laser_filters/LaserScanObjectFilter" type="laser_filters::LaserScanObjectFilter" 
+	    base_class_type="filters::FilterBase<sensor_msgs::LaserScan>">
+      <description>
+        This is a filter that removes points in a laser scan in a circle around a detected object
+      </description>
+    </class>
     <class name="laser_filters/LaserMedianFilter" type="laser_filters::LaserMedianFilter" 
 	    base_class_type="filters::FilterBase<sensor_msgs::LaserScan>">
       <description>

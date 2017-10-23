@@ -23,8 +23,10 @@
   <build_depend>rostest</build_depend>
   <build_depend>angles</build_depend>
   <build_depend>cv_bridge</build_depend>
-  <build_depend>dynamic_reconfigure</build_depend>  
+  <build_depend>dynamic_reconfigure</build_depend>
+  <build_depend>tuw_geometry</build_depend>
   <build_depend>tuw_geometry_msgs</build_depend>  
+  <build_depend>tuw_object_msgs</build_depend>
 
   <run_depend>sensor_msgs</run_depend>
   <run_depend>roscpp</run_depend>
@@ -36,8 +38,9 @@
   <run_depend>angles</run_depend>
   <run_depend>cv_bridge</run_depend>
   <run_depend>dynamic_reconfigure</run_depend>  
+  <run_depend>tuw_geometry</run_depend>
   <run_depend>tuw_geometry_msgs</run_depend>  
-  
+  <run_depend>tuw_object_msgs</run_depend>
 
   <export>
     <cpp cflags="-I${prefix}/include `rosboost-cfg --cflags`" lflags=""/>

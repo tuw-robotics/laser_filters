@@ -7,7 +7,7 @@ set(CMAKE_CXX_FLAGS "-std=c++0x ${CMAKE_CXX_FLAGS}")
 ##############################################################################
 
 set(THIS_PACKAGE_ROS_DEPS sensor_msgs roscpp tf filters message_filters
-  laser_geometry pluginlib angles cv_bridge dynamic_reconfigure tuw_geometry_msgs)
+  laser_geometry pluginlib angles cv_bridge dynamic_reconfigure tuw_geometry tuw_geometry_msgs tuw_object_msgs)
 
 find_package(catkin REQUIRED COMPONENTS ${THIS_PACKAGE_ROS_DEPS})
 find_package(Boost REQUIRED COMPONENTS system signals)
@@ -37,7 +37,7 @@ catkin_package(
 add_library(pointcloud_filters src/pointcloud_filters.cpp)
 target_link_libraries(pointcloud_filters ${catkin_LIBRARIES})
 
-add_library(laser_scan_filters src/laser_scan_filters.cpp src/median_filter.cpp src/array_filter.cpp src/box_filter.cpp src/line_filter.cpp)
+add_library(laser_scan_filters src/laser_scan_filters.cpp src/median_filter.cpp src/array_filter.cpp src/box_filter.cpp src/line_filter.cpp src/object_filter.cpp)
 target_link_libraries(laser_scan_filters ${catkin_LIBRARIES} ${Boost_LIBRARIES}  ${OpenCV_LIBRARIES})
 add_dependencies(laser_scan_filters ${PROJECT_NAME}_gencfg)
 

@@ -38,6 +38,7 @@
 #include "laser_filters/angular_bounds_filter_in_place.h"
 #include "laser_filters/box_filter.h"
 #include "laser_filters/line_filter.h"
+#include "laser_filters/object_filter.h"
 #include "sensor_msgs/LaserScan.h"
 #include "filters/filter_base.h"
 
@@ -55,3 +56,4 @@ PLUGINLIB_DECLARE_CLASS(laser_filters, ScanShadowsFilter, laser_filters::ScanSha
 PLUGINLIB_DECLARE_CLASS(laser_filters, InterpolationFilter, laser_filters::InterpolationFilter, filters::FilterBase<sensor_msgs::LaserScan>)
 PLUGINLIB_DECLARE_CLASS(laser_filters, LaserScanBoxFilter, laser_filters::LaserScanBoxFilter, filters::FilterBase<sensor_msgs::LaserScan>)
 PLUGINLIB_DECLARE_CLASS(laser_filters, LaserLineFilter, laser_filters::LaserLineFilter, filters::FilterBase<sensor_msgs::LaserScan>)
+PLUGINLIB_DECLARE_CLASS(laser_filters, LaserScanObjectFilter, laser_filters::LaserScanObjectFilter, filters::FilterBase<sensor_msgs::LaserScan>)
