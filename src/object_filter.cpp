@@ -32,6 +32,7 @@
 
 #include "laser_filters/object_filter.h"
 #include <tuw_geometry/tuw_geometry.h>
+#include <iostream>
 
 using namespace tuw;
 
@@ -69,7 +70,13 @@ bool LaserScanObjectFilter::configure()
 
 bool LaserScanObjectFilter::update(const sensor_msgs::LaserScan &input_scan, sensor_msgs::LaserScan &output_scan)
 {
-  sensor_msgs::LaserScan temp_scan = input_scan;
+  output_scan = input_scan;
+	
+  if(detection_.objects.size() == 0)
+  {
+    return true;
+  }
+	
   MeasurementLaser measurement_laser;
 
   int nr = (input_scan.angle_max - input_scan.angle_min) / input_scan.angle_increment;
@@ -103,16 +110,19 @@ bool LaserScanObjectFilter::update(const sensor_msgs::LaserScan &input_scan, sen
     tf::Transform p_as_tf;
     tf::poseMsgToTF(detection_.objects[i].object.pose, p_as_tf);
     p_as_tf = detection2laser * p_as_tf;
+    tf::Point p_obj = p_as_tf.getOrigin();
+    p_obj.setZ(0);
 
     for (int j = 0; j < nr; j++)
     {
       tf::Point p_laser;
       p_laser.setX(measurement_laser[j].end_point.x());
       p_laser.setY(measurement_laser[j].end_point.y());
+      p_laser.setZ(0);
 
-      if (insideObject(p_as_tf.getOrigin(), p_laser))
+      if (insideObject(p_obj, p_laser))
       {
-        output_scan.ranges[i] = input_scan.range_max;
+        output_scan.ranges[j] = input_scan.range_max;
       }
     }
   }
